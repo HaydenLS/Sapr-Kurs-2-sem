@@ -180,12 +180,18 @@ void MakeList(ListH& list, int* number, int size)
 	}
 }
 
-void RemoveZeroes(int*& number, int& size)
+void RemoveZeroes(int* number, int& size)
 {
-	while (size > 1 && number[0] == 0) {
-		number++;
+	ReverseInt(number, size);
+
+	int i = size - 1;
+	while (size > 1 && number[i] == 0) {
+	
 		size--;
+		i--;
 	}
+
+	ReverseInt(number, size);
 }
 
 // Сумма чисел
@@ -266,6 +272,27 @@ bool Oless(int* number1, const int sizel1, int* number2, const int sizel2)
 {
 	if (Oequal(number1, sizel1, number2, sizel2))
 		return false;
+	else
+	{
+		if (sizel1 != sizel2)
+			return sizel1 < sizel2;
+		else
+		{
+			for (int i = 0; i < sizel1; i++)
+			{
+				if (number1[i] != number2[i])
+					return number1[i] < number2[i];
+			}
+		}
+
+	}
+}
+
+// <=
+bool Orless(int* number1, const int sizel1, int* number2, const int sizel2)
+{
+	if (Oequal(number1, sizel1, number2, sizel2))
+		return true;
 	else
 	{
 		if (sizel1 != sizel2)
@@ -518,6 +545,7 @@ std::string Out(int* number, int size)
 // Функция вычитания number2 из number1 (number1 >= number2)
 void Subtract(int* number1, int size1, int* number2, int size2)
 {
+	cout << Out(number1, size1) << " - " << Out(number2, size2) << " = ";
 	for (int i = 0; i < size2; i++) {
 		number1[size1 - size2 + i] -= number2[i];
 		if (number1[size1 - size2 + i] < 0) {
@@ -532,12 +560,14 @@ void Subtract(int* number1, int size1, int* number2, int size2)
 			number1[i - 1] -= 1;
 		}
 	}
+	cout << Out(number1, size1) << endl;
 }
 
-void MultiplyByNumber(int* number, int& size, int n)
+void MultiplyByNumber(int* number, int& size, int n, int* result)
 {
-	int result_size = size + 1; // Результат может быть на 1 разряд больше исходного числа
-	int* result = new int[result_size]();
+	int result_size = size; // Результат может быть на 1 разряд больше исходного числа
+	
+	size--;
 
 	int carry = 0;
 	for (int i = size - 1; i >= 0; i--) {
@@ -548,10 +578,6 @@ void MultiplyByNumber(int* number, int& size, int n)
 	result[0] = carry;
 
 	RemoveZeroes(result, result_size);
-
-	delete[] number;
-	
-	number = result;
 
 	size = result_size;
 
@@ -587,55 +613,89 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 	int tempN_size = 0;
 
 	int p = 0; // на какой позиции в 1 числе.
+	int resulti = 0; // индекс резульата
 	for (int i = 0; i < sizelr; i++)
 	{
 		// Формирую число, на которое делится.
 		
-		while (Oless(tempN, tempN_size, number2, sizel2))
+		while (Orless(tempN, tempN_size, number2, sizel2))
 		{
-			tempN[p] = number1[p];
+			cout << Out(tempN, tempN_size) << "<=" << Out(number2, sizel2) << endl;
+			if (p > sizel1)
+				break;
+			tempN[tempN_size] = number1[p]; 
 			p++;
 			tempN_size++;
 		}
+		if (p > sizel1)
+			break;
+		cout << Out(tempN, tempN_size) << ">=" << Out(number2, sizel2) << endl;
 
+
+		RemoveZeroes(tempN, tempN_size);
+
+
+		if (i != 0)
+			cout << Out(tempN, tempN_size) << endl;
 		// Начинаем вычитать нужно сделть копию или двоичный поиск.
 
-		cout << setw(sizel1 + i) << left << Out(tempN, tempN_size) << "|" << endl;
-		if (i != 0)
-			cout << setw(sizel1 + 1) << setfill('-') << "" << setfill(' ') << endl;
-
-
-
+		
 		for (int c = 1; c <= 9; c++)
 		{
-
-			int* product = new int[tempN_size + 1]();
-			for (int i = 0; i < tempN_size; i++)
+			// Объявлем новый массив для работы
+			int product_size = sizel2;
+			int* product = new int[product_size]();
+			for (int i = 0; i < sizel2; i++)
 			{
-				product[i] = tempN[i];
+				product[i] = number2[i];
 			}
-
-			int product_size = tempN_size + 1;
 			
-			MultiplyByNumber(product, product_size, c);
 
-			if(Obig(tempN, tempN_size, product, product_size)) 
+			int* result_product = new int[++product_size]();
+			MultiplyByNumber(product, product_size, c, result_product);
+			delete[] product; product = result_product;
+			
+			cout << "Шаг: " << c << " получен " << Out(product, product_size) << endl;
+
+			RemoveZeroes(product, product_size);
+
+			if(Obig(product, product_size, tempN, tempN_size) || c==9)
 			{
-				if (!Oequal(product, product_size, tempN, tempN_size))
+				if (!Oequal(product, product_size, tempN, tempN_size) && Obig(product, product_size, tempN, tempN_size))
 				{
 					// Нам нужно уже предыдущее.
 					c--;
-					for (int i = 0; i < tempN_size; i++)
+
+					
+					product_size = sizel2;
+					delete[] product;
+					product = new int[product_size]();
+					for (int i = 0; i < sizel2; i++)
 					{
-						product[i] = tempN[i];
+						product[i] = number2[i];
 					}
-					MultiplyByNumber(product, product_size, c);
+
+					RemoveZeroes(tempN, tempN_size);
+
+					result_product = new int[++product_size]();
+					MultiplyByNumber(product, product_size, c, result_product);
+					delete[] product; product = result_product;
+					RemoveZeroes(product, product_size);
 				}
-				
+				/*cout << setw(sizel1) << left << Out(product, product_size) << "|" << endl;
+				if (i == 0)
+					cout << setw(sizel1 + 1) << setfill('-') << "" << setfill(' ');*/
+
 
 				Subtract(tempN, tempN_size, product, product_size);
+				
 				RemoveZeroes(tempN, tempN_size);
-				result[i] = c;
+
+				cout << "Получил промежуточное число: ";
+				cout << setw(p) << Out(tempN, tempN_size) << endl;
+				
+				cout << "В ответ добавляется цифра " << c << endl;
+				result[resulti++] = c;
 				delete[] product;
 				break;
 			}
@@ -647,12 +707,14 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 
 	}
 
+	sizelr = resulti;
 
+	RemoveZeroes(result, sizelr);
 
-
-
-
+	MakeList(result_list, result, sizelr);
+	
 	delete[] result;
+	delete[] tempN;
 
 }
 
