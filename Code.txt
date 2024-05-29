@@ -1,0 +1,403 @@
+String.h
+
+```
+#pragma once
+#define N 10
+
+class String
+{
+	char str[N];
+	int len = N;
+public:
+	//Constructors
+	String(int len=0);
+	~String();
+
+	//Getters
+	int GetLen();
+	char GetElem(int index);
+
+	//Setters
+	void SetElem(char elem, int index);
+	void SetLen(int newlen);
+
+
+	//Methods
+	void Clear();
+
+};
+```
+
+String.cpp:
+
+```
+#include "String.h"
+
+String::String(int len): len(len)
+{
+
+}
+
+String::~String()
+{
+}
+
+int String::GetLen()
+{
+	return len;
+}
+
+char String::GetElem(int index)
+{
+	if (index < len)
+		return str[index];
+	return 0;
+}
+
+void String::SetElem(char elem, int index)
+{
+	if (index < len)
+		str[index] = elem;
+}
+
+void String::SetLen(int newlen)
+{
+	if (newlen > N)
+		len = N;
+	else
+		len = newlen;
+}
+
+void String::Clear()
+{
+	for (int i = 0; i < len; i++)
+	{
+		str[i] = '\0';
+	}
+	len = 0;
+}
+
+
+```
+
+NodeV.h:
+```
+#pragma once
+#include "ListH.h"
+
+class NodeV
+{
+public:
+	ListH elemH;
+	NodeV* lstPrev;
+	NodeV* lstNext;
+
+	NodeV(ListH& elemH, NodeV* lstPrev = nullptr, NodeV* lstNext = nullptr);
+	~NodeV();
+};
+
+
+```
+
+NodeV.cpp:
+```
+#include "NodeV.h"
+
+NodeV::NodeV(ListH& elemH, NodeV* strPrev, NodeV* strNext)
+{
+	this->elemH.copyList(elemH);
+	this->lstPrev = strPrev;
+	this->lstNext = strNext;
+}
+
+NodeV::~NodeV()
+{
+}
+
+```
+
+NodeH.h:
+```
+#pragma once
+#include "String.h"
+
+class NodeH
+{
+public:
+	String elem;
+	NodeH* strPrev;
+	NodeH* strNext;
+
+
+	NodeH(String& str, NodeH* strPrev=nullptr, NodeH* strNext=nullptr);
+	~NodeH();
+};
+
+
+```
+
+
+NodeH.cpp:
+```
+#include "NodeH.h"
+
+NodeH::NodeH(String& str, NodeH* strPrev, NodeH* strNext)
+{
+	this->elem = str;
+	this->strPrev = strPrev;
+	this->strNext = strNext;
+}
+
+NodeH::~NodeH()
+{
+}
+
+```
+
+ListH.h:
+```
+#pragma once
+#include "NodeH.h"
+class ListH
+{
+public:
+	NodeH* head;
+	NodeH* cur;
+	NodeH* last;
+	int size = 0;
+
+
+	ListH();
+	void push_backH(String& str);
+	void copyList(ListH& lst);
+	~ListH();
+
+};
+
+
+```
+
+ListH.cpp:
+```
+#include "ListH.h"
+
+ListH::ListH()
+{
+	head = cur = last = nullptr;
+}
+
+void ListH::push_backH(String& str)
+{
+	if (head == nullptr)
+	{
+		head = new NodeH(str);
+		last = head;
+		size++;
+	}
+	else
+	{
+		NodeH* elem = new NodeH(str, last);
+		last->strNext = elem;
+		last = elem;
+		size++;
+	}
+}
+
+void ListH::copyList(ListH& lst)
+{
+	if (lst.size != 0)
+	{
+		lst.cur = lst.head;
+		while (lst.cur!=nullptr)
+		{
+			this->push_backH(lst.cur->elem);
+			lst.cur = lst.cur->strNext;
+		}
+	}
+}
+
+ListH::~ListH()
+{
+	if (size != 0)
+	{
+		cur = head;
+		while (cur!=nullptr)
+		{
+			NodeH* tmp = cur->strNext;
+			delete cur;
+			cur = tmp;
+		}
+	}
+}
+
+```
+
+ListV.h:
+```
+#pragma once
+#include "NodeV.h"
+
+class ListV
+{
+public:
+	NodeV* head;
+	NodeV* cur;
+	NodeV* last;
+	int size;
+
+	ListV();
+	~ListV();
+
+	void push_backV(ListH& list);
+	
+
+};
+```
+
+ListV.cpp:
+```
+#include "ListV.h"
+
+ListV::ListV()
+{
+	head = cur = last = nullptr;
+}
+
+void ListV::push_backV(ListH& list)
+{
+	if (head == nullptr)
+	{
+		head = new NodeV(list);
+		last = head;
+		size++;
+	}
+	else
+	{
+		NodeV* tmp = new NodeV(list, last);
+		last->lstNext = tmp;
+		last = tmp;
+		size++;
+	}
+}
+
+ListV::~ListV()
+{
+	if (size != 0)
+	{
+		cur = head;
+		while (cur != nullptr)
+		{
+			NodeV* tmp = cur->lstNext;
+			delete cur;
+			cur = tmp;
+		}
+	}
+}
+```
+
+Methods.h:
+```
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include "ListV.h"
+
+using namespace std;
+
+bool ReadStr(ListH& lst, ifstream& f);
+
+void Inf(ListV& two_list, ifstream& f, ofstream& output);
+```
+
+Input.cpp
+```
+#include<iostream>
+#include<fstream>
+#include"Methods.h"
+
+
+using namespace std;
+
+bool ReadStr(ListH& lst, ifstream& f);
+
+void Inf(ListV& two_list, ifstream& f, ofstream& output)
+{
+	ListH temp_lst;
+
+	while (!f.eof())
+	{
+		bool result = ReadStr(temp_lst, f); // Читаем строку.
+		if (result == 0)
+		{
+			output << "Ошибка при чтении файла. Конец программы."; return;
+		}
+		two_list.push_backV(temp_lst);
+
+		if (!f.eof())
+			temp_lst.~ListH(); // Обнулить временный список.
+
+
+	}
+}
+
+bool ReadStr(ListH& lst, ifstream& f)
+{
+	if (f.eof()) return 0;
+
+	String tempStr;
+
+	char t{};
+	int i = 0;
+	while (true)
+	{
+		f >> t;
+		if (i >= N || t == '\n' || f.eof()) // Put String in ListH
+		{
+			tempStr.SetLen(i);
+			lst.push_backH(tempStr);
+
+			tempStr.Clear();
+			i = 0;
+
+			if (f.eof() || t == '\n')
+				return 1;
+
+			f.seekg(int(f.tellg()) - 1);
+		}
+		else
+		{
+			tempStr.SetElem(t, i++);
+		}
+	}
+}
+```
+
+main.cpp:
+```
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include"Methods.h"
+
+using namespace std;
+
+int main()
+{
+
+	setlocale(0, "Rus");
+
+	ifstream file("Input.txt");
+	ifstream request("Request.txt");
+	ofstream ofile("Output.txt");
+	ofstream result("Result.txt");
+
+	ListV list;
+
+	Inf(list, file, ofile);
+
+	cout << "Sucess";
+
+	file.close(); request.close(); ofile.close(); result.close();
+}
+```
