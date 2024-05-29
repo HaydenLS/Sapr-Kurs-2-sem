@@ -534,6 +534,29 @@ void Subtract(int* number1, int size1, int* number2, int size2)
 	}
 }
 
+void MultiplyByNumber(int* number, int& size, int n)
+{
+	int result_size = size + 1; // Результат может быть на 1 разряд больше исходного числа
+	int* result = new int[result_size]();
+
+	int carry = 0;
+	for (int i = size - 1; i >= 0; i--) {
+		int product = number[i] * n + carry;
+		result[i + 1] = product % 10;
+		carry = product / 10;
+	}
+	result[0] = carry;
+
+	RemoveZeroes(result, result_size);
+
+	delete[] number;
+	
+	number = result;
+
+	size = result_size;
+
+}
+
 // Деление
 void Division(int* number1, const int sizel1, int* number2, const int sizel2, ListH& result_list, int& sizelr)
 {
@@ -555,12 +578,74 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 	}
 
 
-
 	// Выделение памяти для результата
 	sizelr = sizel1 - sizel2 + 1;
 	int* result = new int[sizelr]();
 
 
+	int* tempN = new int[sizel1]();
+	int tempN_size = 0;
+
+	int p = 0; // на какой позиции в 1 числе.
+	for (int i = 0; i < sizelr; i++)
+	{
+		// Формирую число, на которое делится.
+		
+		while (Oless(tempN, tempN_size, number2, sizel2))
+		{
+			tempN[p] = number1[p];
+			p++;
+			tempN_size++;
+		}
+
+		// Начинаем вычитать нужно сделть копию или двоичный поиск.
+
+		cout << setw(sizel1 + i) << left << Out(tempN, tempN_size) << "|" << endl;
+		if (i != 0)
+			cout << setw(sizel1 + 1) << setfill('-') << "" << setfill(' ') << endl;
+
+
+
+		for (int c = 1; c <= 9; c++)
+		{
+
+			int* product = new int[tempN_size + 1]();
+			for (int i = 0; i < tempN_size; i++)
+			{
+				product[i] = tempN[i];
+			}
+
+			int product_size = tempN_size + 1;
+			
+			MultiplyByNumber(product, product_size, c);
+
+			if(Obig(tempN, tempN_size, product, product_size)) 
+			{
+				if (!Oequal(product, product_size, tempN, tempN_size))
+				{
+					// Нам нужно уже предыдущее.
+					c--;
+					for (int i = 0; i < tempN_size; i++)
+					{
+						product[i] = tempN[i];
+					}
+					MultiplyByNumber(product, product_size, c);
+				}
+				
+
+				Subtract(tempN, tempN_size, product, product_size);
+				RemoveZeroes(tempN, tempN_size);
+				result[i] = c;
+				delete[] product;
+				break;
+			}
+			
+			
+
+
+		}
+
+	}
 
 
 
@@ -653,6 +738,8 @@ void DoRequest(ListV& list, ListH& request)
 
 	case '/':
 
+		cout << GREEN << "Результат деления чисел: \n\n" << RESET;
+		cout << '\t' << list[i1] << "|" << list[i2] << endl;
 
 
 		Division(number1, size1, number2, size2, result, rSize);

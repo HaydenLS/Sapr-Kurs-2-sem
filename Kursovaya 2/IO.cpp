@@ -3,15 +3,15 @@
 #include<ostream>
 
 
-using namespace std;
 
-bool ReadStr(ListH& lst, ifstream& f, int& bytes);
+
+bool ReadStr(ListH& lst, std::ifstream& f, int& bytes);
 
 void Inf(ListV& two_list, std::ifstream& f, std::ofstream& output)
 {
 	
 	ListH temp_lst;
-	f.clear(); f.unsetf(ios::skipws);
+	f.clear(); f.unsetf(std::ios::skipws);
 	int bytes = 0; // Количесвто считаных символов.
 	while (!f.eof())
 	{
@@ -30,7 +30,7 @@ void Inf(ListV& two_list, std::ifstream& f, std::ofstream& output)
 	}
 }
 
-bool ReadStr(ListH& lst, ifstream& f, int& bytes)
+bool ReadStr(ListH& lst, std::ifstream& f, int& bytes)
 {
 	if (f.eof()) return 0;
 
@@ -62,26 +62,26 @@ bool ReadStr(ListH& lst, ifstream& f, int& bytes)
 	}
 }
 
-void OutStrH(ListH& lst, ofstream& ofile, bool isProgram);
+void OutStrH(ListH& lst, std::ofstream& ofile, bool isProgram);
 
-void OutPut(ListV& two_list, ofstream& ofile, bool isProgram)
+void OutPut(ListV& two_list, std::ofstream& ofile, bool isProgram)
 {
 	two_list.cur = two_list.head;
 	while (two_list.cur != nullptr)
 	{
 		OutStrH(two_list.cur->elemH, ofile, isProgram);
-		ofile << endl;
+		ofile << std::endl;
 
 		two_list.cur = two_list.cur->lstNext;
 
 		if (two_list.cur != nullptr && isProgram)
-			ofile << "\n |\n\\|/\n" << endl;
+			ofile << "\n |\n\\|/\n" << std::endl;
 		else
-			ofile << endl;
+			ofile << std::endl;
 	}
 }
 
-void OutStrH(ListH& lst, ofstream& ofile, bool isProgram)
+void OutStrH(ListH& lst, std::ofstream& ofile, bool isProgram)
 {
 	lst.cur = lst.head;
 	int s = 0;
