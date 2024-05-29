@@ -600,6 +600,17 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 		int* zero = new int[1];
 		zero[0] = 0;
 		MakeList(result_list, zero, 1);
+		delete[]zero;
+		return;
+	}
+
+	// Если числа равны, ответ 1
+	if (Oequal(number1, sizel1, number2, sizel2))
+	{
+		int* one = new int[1];
+		one[0] = 1;
+		MakeList(result_list, one, 1);
+		delete[]one;
 		return;
 	}
 
@@ -617,15 +628,29 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 	for (int i = 0; i < sizelr; i++)
 	{
 		// Формирую число, на которое делится.
-		
+		if (p >= sizel1)
+			break;
+
+		// Не забываю, что если сношу две цифры сразу, то ответ нолик
+		int y = 0; // Количество снесенных цифр в этот раз.
 		while (Orless(tempN, tempN_size, number2, sizel2))
 		{
 			cout << Out(tempN, tempN_size) << "<=" << Out(number2, sizel2) << endl;
 			if (p > sizel1)
 				break;
+			
+
 			tempN[tempN_size] = number1[p]; 
 			p++;
 			tempN_size++;
+			y++;
+
+			if (y > 1 && resulti)
+			{
+				result[resulti++] = 0;
+			}
+
+
 		}
 		if (p > sizel1)
 			break;
