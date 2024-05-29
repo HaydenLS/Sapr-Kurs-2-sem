@@ -180,21 +180,12 @@ void MakeList(ListH& list, int* number, int size)
 	}
 }
 
-void RemoveZeroes(int* numberR, int& sizelr, bool isReverse = false)
+void RemoveZeroes(int*& number, int& size)
 {
-	// Удаление ведущих нулей.
-	if(!isReverse)
-		ReverseInt(numberR, sizelr);
-
-	int i = sizelr;
-	while (numberR[i - 1] == 0)
-	{
-		sizelr--;
-		i--;
+	while (size > 1 && number[0] == 0) {
+		number++;
+		size--;
 	}
-
-	if (!isReverse)
-		ReverseInt(numberR, sizelr);
 }
 
 // Сумма чисел
@@ -289,6 +280,18 @@ bool Oless(int* number1, const int sizel1, int* number2, const int sizel2)
 		}
 
 	}
+}
+
+bool Obig(int* number1, const int sizel1, int* number2, const int sizel2) // >=
+{
+	if (!Oless(number1, sizel1, number2, sizel2)) // Значит что >=
+	{
+		
+		return true;
+		
+	}
+
+	return false;
 }
 
 // Вычитание
@@ -512,23 +515,60 @@ std::string Out(int* number, int size)
 	return oss.str();
 }
 
+// Функция вычитания number2 из number1 (number1 >= number2)
+void Subtract(int* number1, int size1, int* number2, int size2)
+{
+	for (int i = 0; i < size2; i++) {
+		number1[size1 - size2 + i] -= number2[i];
+		if (number1[size1 - size2 + i] < 0) {
+			number1[size1 - size2 + i] += 10;
+			number1[size1 - size2 + i - 1] -= 1;
+		}
+	}
+	// Обработка заемов
+	for (int i = size1 - size2 - 1; i >= 0; i--) {
+		if (number1[i] < 0) {
+			number1[i] += 10;
+			number1[i - 1] -= 1;
+		}
+	}
+}
+
 // Деление
 void Division(int* number1, const int sizel1, int* number2, const int sizel2, ListH& result_list, int& sizelr)
 {
+	// Проверка на случай деления на ноль
+	if (sizel2 == 1 && number2[0] == 0) {
+		throw std::invalid_argument("Division by zero");
+	}
+
+	// Удаляем ведущие нули из делимого и делителя
+	RemoveZeroes(number1, const_cast<int&>(sizel1));
+	RemoveZeroes(number2, const_cast<int&>(sizel2));
+
+	// Если делимое меньше делителя, результат - 0
+	if (Oless(number1, sizel1, number2, sizel2)) {
+		int* zero = new int[1];
+		zero[0] = 0;
+		MakeList(result_list, zero, 1);
+		return;
+	}
+
+
+
 	// Выделение памяти для результата
 	sizelr = sizel1 - sizel2 + 1;
 	int* result = new int[sizelr]();
 
-	//// Переворачиваем списки для более удобной работы
-	//ReverseInt(number1, sizel1);
-	//ReverseInt(number2, sizel2);
-
-	int* tempList = new int[sizel1];
 
 
 
-	
-	
+
+
+
+
+	delete[] result;
+
 }
 
 
