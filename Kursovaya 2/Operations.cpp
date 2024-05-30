@@ -113,16 +113,15 @@ bool Obig(int* number1, const int sizel1, int* number2, const int sizel2)
 // Сумма чисел
 void Addition(int* number1, const int sizel1, int* number2, const int sizel2, ListH& result, int& sizelr)
 {
+	OPEN_LOG
+	log << "Производим сложение: \n";
 	sizelr = max(sizel1, sizel2) + 1;
 	int* numberR = new int[sizelr];
 	// Меняем элементы местами
 	ReverseInt(number1, sizel1);
 	ReverseInt(number2, sizel2);
 
-	// Для логов.
-	/*cout << '\n';
-	OutNumber(number1, sizel1);
-	OutNumber(number2, sizel2);*/
+	log << "Числа переворачиваем для удобства: " << Out(number1, sizel1) << endl << Out(number2, sizel2) << endl;
 
 
 	int carry = 0, total = 0;
@@ -137,6 +136,8 @@ void Addition(int* number1, const int sizel1, int* number2, const int sizel2, Li
 
 		// Если число+ остаток больше 9 то в ответ пришем посл цифру если нет то просто число+остаток
 		numberR[i] = total + carry > 9 ? (total + carry) % 10 : total + carry;
+
+		log << "После " << i << "-го сложения получим: " << Out(numberR, i) << endl;
 
 		// Сохраняем остаток
 		carry = (total + carry) / 10;
@@ -154,16 +155,9 @@ void Addition(int* number1, const int sizel1, int* number2, const int sizel2, Li
 	ReverseInt(numberR, sizelr);
 
 
-
-	//OutNumber(number1, sizel1, '+');
-	//OutNumber(number2, sizel2, '=');
-
-	//OutNumber(numberR, sizelr);
-
-	// Сохраняем результат в список result
-
 	MakeList(result, numberR, sizelr);
 
+	log << "В результате: " << Out(numberR, sizelr) << endl;
 
 	delete[] numberR;
 }
@@ -171,12 +165,16 @@ void Addition(int* number1, const int sizel1, int* number2, const int sizel2, Li
 // Вычитание
 void Sub(int* number1, const int sizel1, int* number2, const int sizel2, ListH& result, int& sizelr)
 {
+	OPEN_LOG
+	log << "Производим вычитание: \n";
 	sizelr = max(sizel1, sizel2);
 	int* numberR = new int[sizelr];
 
 	// Меняем элементы местами
 	ReverseInt(number1, sizel1);
 	ReverseInt(number2, sizel2);
+	log << "Числа переворачиваем для удобства: " << Out(number1, sizel1) << endl << Out(number2, sizel2) << endl;
+
 
 	// Создаем коппию первого числа на всякий случай
 	int* number1copy = new int[sizel1];
@@ -203,7 +201,10 @@ void Sub(int* number1, const int sizel1, int* number2, const int sizel2, ListH& 
 			total += 10;
 		}
 
+
 		numberR[i] = total;
+
+		log << "После " << i << "-го вычитания получим: " << Out(numberR, i) << endl;
 	}
 
 	int i = sizelr;
@@ -221,29 +222,20 @@ void Sub(int* number1, const int sizel1, int* number2, const int sizel2, ListH& 
 	ReverseInt(numberR, sizelr);
 
 
-
-
-	/*OutNumber(number1, sizel1, '-');
-	OutNumber(number2, sizel2, '=');
-
-	OutNumber(numberR, sizelr);*/
-
-	// Сохраняем результат в список result
-
-	MakeList(result, numberR, sizelr);
-
-	/*OutNumber(numberR, sizelr);*/
+	log << "В результате: " << Out(numberR, sizelr) << endl;
 
 	MakeList(result, numberR, sizelr);
 
 	delete[] number1copy;
 	delete[] numberR;
+	CLOSE_LOG
 }
 
 
 // Умножение
 void Multiply(int* number1, const int sizel1, int* number2, const int sizel2, ListH& result, int& sizelr)
 {
+	OPEN_LOG
 	// Если умножаем на 0.
 	if (sizel1 == 1 && number1[0] == 0 || sizel2 == 1 && number2[0] == 0)
 	{
@@ -296,6 +288,7 @@ void Multiply(int* number1, const int sizel1, int* number2, const int sizel2, Li
 			MakeList(tempLst, promNumber, promSize);
 
 			cout << '\t' << setw(w) << tempLst << endl;
+			log << '\t' << setw(w) << tempLst << endl;
 
 			tempLst.~ListH();
 		}
@@ -342,7 +335,7 @@ void Multiply(int* number1, const int sizel1, int* number2, const int sizel2, Li
 
 	delete[] numberR;
 
-
+	CLOSE_LOG
 }
 
 // Вспомогательные методы для деления.
@@ -413,6 +406,7 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 			int* zero = new int[1];
 			zero[0] = 0;
 			MakeList(result_list, zero, 1);
+			log << "Результат: " << 0;
 			delete[]zero;
 			return;
 		}
@@ -423,6 +417,7 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 		int* one = new int[1];
 		one[0] = 1;
 		MakeList(result_list, one, 1);
+		log << "Результат: " << 1;
 		delete[]one;
 		return;
 	}
@@ -526,7 +521,11 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 				if (i == 0) cout << setw(sizel1 - p + 1) << '|';
 				cout << endl;
 				if (i == 0)
-					cout << '\t' << setw(sizel1 + 1) << setfill('-') << "" << setfill(' ') << endl;
+				{
+					cout << '\t' << setw(sizel1 + 1) << setfill('-') << "" << endl;
+					cout << setfill(' ') << "";
+				}
+
 
 
 				Subtract(tempN, tempN_size, product, product_size);

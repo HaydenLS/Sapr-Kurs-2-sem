@@ -12,6 +12,6 @@ bool ReadStr(ListH& lst, std::ifstream& f, int& bytes);
 
 void Inf(ListV& two_list, std::ifstream& f, std::ofstream& output);
 
-void OutStrH(ListH& lst, std::ofstream& ofile, bool isProgram);
+void OutStrH(ListH& lst, std::ostream& ofile, bool isProgram);
 
-void OutPut(ListV& two_list, std::ofstream& ofile, bool isProgram = true);
+void OutPut(ListV& two_list, std::ostream& ofile, bool isProgram = true);
