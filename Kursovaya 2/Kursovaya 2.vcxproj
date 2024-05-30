@@ -137,6 +137,7 @@
     <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleRequest.h" />
     <ClInclude Include="ListH.h" />
     <ClInclude Include="ListV.h" />
     <ClInclude Include="NodeV.h" />

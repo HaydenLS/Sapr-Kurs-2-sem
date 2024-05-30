@@ -1,6 +1,5 @@
 #include <fstream>
 #include <sstream>
-
 #include"Methods.h"
 
 
@@ -545,7 +544,8 @@ std::string Out(int* number, int size)
 // Функция вычитания number2 из number1 (number1 >= number2)
 void Subtract(int* number1, int size1, int* number2, int size2)
 {
-	cout << Out(number1, size1) << " - " << Out(number2, size2) << " = ";
+	OPEN_LOG
+	log << Out(number1, size1) << " - " << Out(number2, size2) << " = ";
 	for (int i = 0; i < size2; i++) {
 		number1[size1 - size2 + i] -= number2[i];
 		if (number1[size1 - size2 + i] < 0) {
@@ -560,11 +560,13 @@ void Subtract(int* number1, int size1, int* number2, int size2)
 			number1[i - 1] -= 1;
 		}
 	}
-	cout << Out(number1, size1) << endl;
+	log << Out(number1, size1) << endl;
+	CLOSE_LOG
 }
 
 void MultiplyByNumber(int* number, int& size, int n, int* result)
 {
+	
 	int result_size = size; // Результат может быть на 1 разряд больше исходного числа
 	
 	size--;
@@ -586,17 +588,11 @@ void MultiplyByNumber(int* number, int& size, int n, int* result)
 // Деление
 void Division(int* number1, const int sizel1, int* number2, const int sizel2, ListH& result_list, int& sizelr)
 {
-	// Проверка на случай деления на ноль
-	if (sizel2 == 1 && number2[0] == 0) {
-		throw std::invalid_argument("Division by zero");
-	}
-
-	// Удаляем ведущие нули из делимого и делителя
-	RemoveZeroes(number1, const_cast<int&>(sizel1));
-	RemoveZeroes(number2, const_cast<int&>(sizel2));
+	OPEN_LOG
 
 	// Если делимое меньше делителя, результат - 0
-	if (Oless(number1, sizel1, number2, sizel2)) {
+	if (Oless(number1, sizel1, number2, sizel2)) 
+	{
 		int* zero = new int[1];
 		zero[0] = 0;
 		MakeList(result_list, zero, 1);
@@ -635,7 +631,7 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 		int y = 0; // Количество снесенных цифр в этот раз.
 		while (Orless(tempN, tempN_size, number2, sizel2))
 		{
-			cout << Out(tempN, tempN_size) << "<=" << Out(number2, sizel2) << endl;
+			log << Out(tempN, tempN_size) << "<=" << Out(number2, sizel2) << endl;
 			if (p > sizel1)
 				break;
 			
@@ -654,14 +650,15 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 		}
 		if (p > sizel1)
 			break;
-		cout << Out(tempN, tempN_size) << ">=" << Out(number2, sizel2) << endl;
+
+		log << Out(tempN, tempN_size) << ">=" << Out(number2, sizel2) << endl;
 
 
 		RemoveZeroes(tempN, tempN_size);
 
 
 		if (i != 0)
-			cout << Out(tempN, tempN_size) << endl;
+			cout << '\t' << setw(p) << Out(tempN, tempN_size) << endl;
 		// Начинаем вычитать нужно сделть копию или двоичный поиск.
 
 		
@@ -680,7 +677,7 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 			MultiplyByNumber(product, product_size, c, result_product);
 			delete[] product; product = result_product;
 			
-			cout << "Шаг: " << c << " получен " << Out(product, product_size) << endl;
+			log << "Шаг: " << c << " получен " << Out(product, product_size) << endl;
 
 			RemoveZeroes(product, product_size);
 
@@ -707,32 +704,38 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 					delete[] product; product = result_product;
 					RemoveZeroes(product, product_size);
 				}
-				/*cout << setw(sizel1) << left << Out(product, product_size) << "|" << endl;
+			
+				cout << '\t' << setw(p) << Out(product, product_size);
+				if (i == 0) cout << setw(sizel1-p+1) << '|';
+				cout << endl;
 				if (i == 0)
-					cout << setw(sizel1 + 1) << setfill('-') << "" << setfill(' ');*/
+					cout << '\t' << setw(sizel1 + 1) << setfill('-') << "" << setfill(' ') << endl;
 
 
 				Subtract(tempN, tempN_size, product, product_size);
 				
 				RemoveZeroes(tempN, tempN_size);
 
-				cout << "Получил промежуточное число: ";
-				cout << setw(p) << Out(tempN, tempN_size) << endl;
-				
-				cout << "В ответ добавляется цифра " << c << endl;
+				log << "Получил промежуточное число: ";
+				log << setw(p) << Out(tempN, tempN_size) << endl;
+				log << "В ответ добавляется цифра " << c << endl;
+
+
 				result[resulti++] = c;
 				delete[] product;
 				break;
 			}
-			
-			
-
-
+		
 		}
 
 	}
 
+
+	log << "Результат: " << Out(result, resulti);
+
 	sizelr = resulti;
+
+	cout << '\t' << "Ответ: " << Out(result, resulti) << endl;
 
 	RemoveZeroes(result, sizelr);
 
@@ -741,6 +744,7 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 	delete[] result;
 	delete[] tempN;
 
+	CLOSE_LOG
 }
 
 
@@ -790,7 +794,7 @@ void DoRequest(ListV& list, ListH& request)
 
 		if (Oless(number1, size1, number2, size2))
 		{
-			cout << "Нельзя вычитать из меньшего большее!!\n";
+			cout << RED << "Нельзя вычитать из меньшего большее!!\n" << RESET;
 			return;
 		}
 		Sub(number1, size1, number2, size2, result, rSize);
@@ -824,6 +828,13 @@ void DoRequest(ListV& list, ListH& request)
 		break;
 
 	case '/':
+
+		// Проверка на случай деления на ноль
+		if (size2 == 1 && number2[0] == 0) 
+		{
+			cout << RED << "Нельзя вычитать из меньшего большее!!\n" << RESET;
+			return;
+		}
 
 		cout << GREEN << "Результат деления чисел: \n\n" << RESET;
 		cout << '\t' << list[i1] << "|" << list[i2] << endl;
@@ -927,7 +938,6 @@ int main()
 	ifstream file("Input.txt");
 	ifstream request("Request.txt"); request.unsetf(ios::skipws);
 	ofstream ofile("Output.txt");
-	ofstream result("Result.txt");
 
 	ListV list;
 
@@ -941,5 +951,5 @@ int main()
 
 	RequestHandler(list);
 
-	file.close(); request.close(); ofile.close(); result.close();
+	file.close(); request.close(); ofile.close();
 }

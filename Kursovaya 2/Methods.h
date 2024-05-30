@@ -4,6 +4,9 @@
 #include <iomanip>
 #include "ListV.h"
 
+#define OPEN_LOG std::ofstream log("Log.txt", ios::app);
+#define CLOSE_LOG log.close();
+
 bool ReadStr(ListH& lst, std::ifstream& f, int& bytes);
 
 void Inf(ListV& two_list, std::ifstream& f, std::ofstream& output);
