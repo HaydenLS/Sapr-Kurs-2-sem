@@ -128,12 +128,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConsoleRequest.cpp" />
     <ClCompile Include="ListH.cpp" />
     <ClCompile Include="ListV.cpp" />
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="NodeV.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NodeH.cpp" />
+    <ClCompile Include="Operations.cpp" />
     <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +145,7 @@
     <ClInclude Include="NodeV.h" />
     <ClInclude Include="Methods.h" />
     <ClInclude Include="NodeH.h" />
+    <ClInclude Include="Operations.h" />
     <ClInclude Include="String.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
