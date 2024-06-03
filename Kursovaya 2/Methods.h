@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iomanip>
 #include "ListV.h"
-#include "ConsoleRequest.h"
 
 #define OPEN_LOG std::ofstream log("Log.txt", ios::app);
 #define CLOSE_LOG log.close();

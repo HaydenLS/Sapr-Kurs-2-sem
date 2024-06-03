@@ -1,7 +1,6 @@
 // «десь все что св€зано с запросами и так далее.
 
 #pragma once
-#include "Methods.h"
 #include "Operations.h"
 
 // ѕревращает списки в массивы чисел.

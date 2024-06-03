@@ -44,10 +44,6 @@ void ListH::copyList(const ListH& lst)
 	}
 }
 
-void ListH::SaveArray(char* string, int len)
-{
-	
-}
 
 int ListH::GetSize()
 {

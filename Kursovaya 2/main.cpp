@@ -1,7 +1,9 @@
 #include <sstream>
-#include"Methods.h"
+#include"ConsoleRequest.h"
 
 using namespace std;
+
+// Основной метод программы.
 int main()
 {
 	setlocale(0, "Rus");

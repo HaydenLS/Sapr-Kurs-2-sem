@@ -7,6 +7,7 @@
 
 bool ReadStr(ListH& lst, std::ifstream& f, int& bytes);
 
+// Считывание файла
 void Inf(ListV& two_list, std::ifstream& f, std::ofstream& output)
 {
 	
@@ -30,6 +31,7 @@ void Inf(ListV& two_list, std::ifstream& f, std::ofstream& output)
 	}
 }
 
+// Чтение строки
 bool ReadStr(ListH& lst, std::ifstream& f, int& bytes)
 {
 	if (f.eof()) return 0;
@@ -64,6 +66,7 @@ bool ReadStr(ListH& lst, std::ifstream& f, int& bytes)
 
 void OutStrH(ListH& lst, std::ostream& ofile, bool isProgram);
 
+// Вывод всего списка
 void OutPut(ListV& two_list, std::ostream& ofile, bool isProgram)
 {
 	two_list.cur = two_list.head;
@@ -81,6 +84,7 @@ void OutPut(ListV& two_list, std::ostream& ofile, bool isProgram)
 	}
 }
 
+// Вывод строки списка
 void OutStrH(ListH& lst, std::ostream& ofile, bool isProgram)
 {
 	lst.cur = lst.head;

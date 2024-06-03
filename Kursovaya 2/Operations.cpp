@@ -406,7 +406,8 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 			int* zero = new int[1];
 			zero[0] = 0;
 			MakeList(result_list, zero, 1);
-			log << "Результат: " << 0;
+			log << "Результат: " << 0 << endl;
+			cout << '\t' << "Ответ: " << 0 << endl;
 			delete[]zero;
 			return;
 		}
@@ -418,6 +419,7 @@ void Division(int* number1, const int sizel1, int* number2, const int sizel2, Li
 		one[0] = 1;
 		MakeList(result_list, one, 1);
 		log << "Результат: " << 1;
+		cout << '\t' << "Ответ: " << 1 << endl;
 		delete[]one;
 		return;
 	}
